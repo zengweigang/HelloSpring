@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	<context:property-placeholder location="classpath:jdbc.properties"/>
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+	
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<context:component-scan base-package="com.gang.dev.control" />
+	<context:component-scan base-package="com.gang.dev.model" />
+	<context:component-scan base-package="com.gang.dev.service" />
+	<context:component-scan base-package="com.gang.dev.dao" />
+	<!-- 配置数据源 -->
+	<beans:bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<beans:property name="driverClass"><beans:value>${jdbc.driverClassName}</beans:value></beans:property>
+		<beans:property name="jdbcUrl"><beans:value>${jdbc.url}</beans:value></beans:property>
+		<beans:property name="user"><beans:value>${jdbc.username}</beans:value></beans:property>
+		<beans:property name="password"><beans:value>${jdbc.password}</beans:value></beans:property>
+		<beans:property name="minPoolSize"><beans:value>5</beans:value></beans:property>
+		<beans:property name="maxPoolSize"><beans:value>30</beans:value></beans:property>
+		<beans:property name="initialPoolSize"><beans:value>10</beans:value></beans:property>
+		<!--最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+		<beans:property name="maxIdleTime"><beans:value>60</beans:value></beans:property>
+		<beans:property name="acquireIncrement"><beans:value>5</beans:value></beans:property>
+		<!--JDBC的标准参数，用以控制数据源内加载的PreparedStatements数量。但由于预缓存的statements 属于单个connection而不是整个连接池。所以设置这个参数需要考虑到多方面的因素。 -->
+        <!--如果maxStatements与maxStatementsPerConnection均为0，则缓存被关闭。Default: 0 -->
+        <beans:property name="maxStatements"><beans:value>0</beans:value></beans:property>
+        <!--每60秒检查所有连接池中的空闲连接。Default: 0 -->
+         <beans:property name="idleConnectionTestPeriod"><beans:value>60</beans:value></beans:property>
+         <!--定义在从数据库获取新连接失败后重复尝试的次数。Default: 30 -->
+         <beans:property name="acquireRetryAttempts"><beans:value>30</beans:value></beans:property>
+         <!--获取连接失败将会引起所有等待连接池来获取连接的线程抛出异常。但是数据源仍有效 保留，并在下次调用getConnection()的时候继续尝试获取连接。如果设为true，那么在尝试-->
+         <!--获取连接失败后该数据源将申明已断开并永久关闭。Default: false -->
+         <beans:property name="breakAfterAcquireFailure"><beans:value>true</beans:value></beans:property>
+          <!--因性能消耗大请只在需要的时候使用它。如果设为true那么在每个connection提交的 时候都将校验其有效性。建议使用idleConnectionTestPeriod或automaticTestTable-->
+          <!--等方法来提升连接测试的性能。Default: false --> 
+         <beans:property name="testConnectionOnCheckout"><beans:value>false</beans:value></beans:property>
+	</beans:bean>
+	<!-- 配置Jdbc模板 -->
+	<beans:bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<beans:property name="dataSource" ref="dataSource"></beans:property>
+	</beans:bean>
+	<!-- 配置事务管理器 -->
+	<beans:bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >
+		<beans:property name="dataSource" ref="dataSource"></beans:property>		
+	</beans:bean>
+	<!-- 通过AOP配置提供事务增强，让service包下所有Bean的所有方法拥有事务 -->
+<!-- 	<beans:aop:config proxy-target-class="true"> -->
+<!--         <aop:pointcut id="serviceMethod" -->
+<!--             expression=" execution(* com.service..*(..))" /> -->
+<!--         <aop:advisor pointcut-ref="serviceMethod" advice-ref="txAdvice" /> -->
+<!--     </beans:aop:config> -->
+<!--     <beans:tx:advice id="txAdvice" transaction-manager="transactionManager"> -->
+<!--         <tx:attributes> -->
+<!--             <tx:method name="*" /> -->
+<!--         </tx:attributes> -->
+<!--     </beans:tx:advice> -->
+	<!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
+    <beans:bean  class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+	
+</beans:beans>
