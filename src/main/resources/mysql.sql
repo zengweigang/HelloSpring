@@ -33,3 +33,10 @@ INSERT INTO blog VALUES ('2', 'test 1', 'test 1');
 INSERT INTO blog VALUES ('3', 'test 2', 'test 2');
 INSERT INTO blog VALUES ('4', 'test 3', 'test 3');
 INSERT INTO blog VALUES ('5', 'test 4', 'test 4');
+
+CREATE TABLE `t_article` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) DEFAULT NULL,
+  `content` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
