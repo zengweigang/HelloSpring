@@ -1,0 +1,6 @@
+截止此时已经做了的：
+MVC:使用了SpringMvc
+dao:使用了 DBUTILS 和spring的jdbc
+前端框架使用了 bootstrap
+计划要做的 
+准备选择一个开源权限
