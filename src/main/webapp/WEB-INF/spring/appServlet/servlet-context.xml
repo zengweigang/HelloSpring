@@ -3,9 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
 	<context:property-placeholder location="classpath:jdbc.properties"/>
@@ -55,25 +57,21 @@
 	<beans:bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
 		<beans:property name="dataSource" ref="dataSource"></beans:property>
 	</beans:bean>
-	<!-- 配置DbUtils模版 -->
-	<beans:bean id="dbUtilsTemplate" class="com.gang.dev.util.DbUtilsTemplate"> 
-        <beans:property name="dataSource" ref="dataSource"/> 
-	</beans:bean> 
 	<!-- 配置事务管理器 -->
 	<beans:bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >
 		<beans:property name="dataSource" ref="dataSource"></beans:property>		
 	</beans:bean>
+	<tx:annotation-driven transaction-manager="transactionManager"/>
 	<!-- 通过AOP配置提供事务增强，让service包下所有Bean的所有方法拥有事务 -->
-<!-- 	<beans:aop:config proxy-target-class="true"> -->
-<!--         <aop:pointcut id="serviceMethod" -->
-<!--             expression=" execution(* com.service..*(..))" /> -->
+<!-- 	<aop:config proxy-target-class="true"> -->
+<!--         <aop:pointcut id="serviceMethod" expression=" execution(* com.gang.dev.service..*(..))" /> -->
 <!--         <aop:advisor pointcut-ref="serviceMethod" advice-ref="txAdvice" /> -->
-<!--     </beans:aop:config> -->
-<!--     <beans:tx:advice id="txAdvice" transaction-manager="transactionManager"> -->
+<!--     </aop:config> -->
+<!--     <tx:advice id="txAdvice" transaction-manager="transactionManager"> -->
 <!--         <tx:attributes> -->
 <!--             <tx:method name="*" /> -->
 <!--         </tx:attributes> -->
-<!--     </beans:tx:advice> -->
+<!--     </tx:advice> -->
 	<!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
     <beans:bean  class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
 	

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gang.dev.dao.BlogDao;
+import com.gang.dev.model.Blog;
 import com.gang.dev.service.BlogService;
 @Service
 public class BlogServiceImpl implements BlogService {
@@ -11,8 +12,11 @@ public class BlogServiceImpl implements BlogService {
 	BlogDao dao;
 	@Override
 	public int getBlogCount() {
-		// TODO Auto-generated method stub
 		return dao.getBlogCount();
+	}
+	@Override
+	public int addBlog(Blog blog) {
+		return dao.addBlog(blog);
 	}
 
 }
